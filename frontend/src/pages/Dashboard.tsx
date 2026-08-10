@@ -1,8 +1,9 @@
 import { useState, useEffect, useMemo, useCallback, useRef } from 'react'
 import { useLocation } from 'react-router-dom'
 import { useTranslation } from 'react-i18next'
-import { Plus, Car as CarIcon, RefreshCw, ChevronDown, AlertCircle } from 'lucide-react'
+import { Plus, Car as CarIcon, RefreshCw, ChevronDown, AlertCircle, Archive, CheckSquare } from 'lucide-react'
 import VehicleStatisticsCard from '../components/VehicleStatisticsCard'
+import BulkArchiveModal from '../components/modals/BulkArchiveModal'
 import VehicleWizard from '../components/VehicleWizard'
 import FleetHealthStrip from '../components/FleetHealthStrip'
 import { PageHeader, Dropdown, Button, EmptyState, Card } from '../components/ui'
@@ -22,6 +23,9 @@ export default function Dashboard() {
   const [showWizard, setShowWizard] = useState(false)
   const [sortBy, setSortBy] = useState<SortOption>('name')
   const [filterBy, setFilterBy] = useState<FilterOption>('all')
+  const [selectMode, setSelectMode] = useState(false)
+  const [selectedVins, setSelectedVins] = useState<Set<string>>(new Set())
+  const [showBulkArchive, setShowBulkArchive] = useState(false)
 
   // Kept out of loadDashboard's dependency array on purpose: useTranslation()
   // can hand back a new `t` identity on re-render (the vitest i18n mock does
@@ -59,6 +63,11 @@ export default function Dashboard() {
   const hasSharedVehicles = useMemo(() => {
     return dashboard?.vehicles?.some((v) => v.is_shared_with_me) ?? false
   }, [dashboard?.vehicles])
+
+  const ownedCount = useMemo(
+    () => dashboard?.vehicles?.filter((v) => !v.is_shared_with_me).length ?? 0,
+    [dashboard?.vehicles],
+  )
 
   // Filter and sort vehicles
   const sortedVehicles = useMemo(() => {
@@ -114,6 +123,22 @@ export default function Dashboard() {
 
   const vehicleCount = dashboard?.total_vehicles || 0
 
+  const toggleSelectMode = () => {
+    setSelectMode((prev) => {
+      if (prev) setSelectedVins(new Set())
+      return !prev
+    })
+  }
+
+  const toggleVin = (vin: string) => {
+    setSelectedVins((prev) => {
+      const next = new Set(prev)
+      if (next.has(vin)) next.delete(vin)
+      else next.add(vin)
+      return next
+    })
+  }
+
   return (
     <>
       <div className="container mx-auto px-4 py-8">
@@ -147,6 +172,20 @@ export default function Dashboard() {
                   }
                 />
               )}
+              {ownedCount > 1 && filterBy !== 'shared' && (
+                <Button
+                  variant="secondary"
+                  icon={selectMode ? CheckSquare : Archive}
+                  onClick={toggleSelectMode}
+                >
+                  {selectMode ? t('dashboard.cancelSelect') : t('dashboard.selectVehicles')}
+                </Button>
+              )}
+              {selectMode && selectedVins.size > 0 && (
+                <Button variant="primary" icon={Archive} onClick={() => setShowBulkArchive(true)}>
+                  {t('dashboard.bulkArchive')} ({selectedVins.size})
+                </Button>
+              )}
               <Button variant="primary" icon={Plus} onClick={() => setShowWizard(true)}>
                 {t('dashboard.addVehicle')}
               </Button>
@@ -179,7 +218,13 @@ export default function Dashboard() {
             {/* Vehicles Grid */}
             <div className="grid grid-cols-[repeat(auto-fill,minmax(340px,1fr))] gap-[22px]">
               {sortedVehicles.map((vehicleStats) => (
-                <VehicleStatisticsCard key={vehicleStats.vin} stats={vehicleStats} />
+                <VehicleStatisticsCard
+                  key={vehicleStats.vin}
+                  stats={vehicleStats}
+                  selectMode={selectMode && !vehicleStats.is_shared_with_me}
+                  selected={selectedVins.has(vehicleStats.vin)}
+                  onToggleSelect={toggleVin}
+                />
               ))}
             </div>
           </div>
@@ -206,6 +251,17 @@ export default function Dashboard() {
           onSuccess={handleVehicleCreated}
         />
       )}
+
+      <BulkArchiveModal
+        isOpen={showBulkArchive}
+        vins={Array.from(selectedVins)}
+        onClose={() => setShowBulkArchive(false)}
+        onConfirm={() => {
+          setSelectMode(false)
+          setSelectedVins(new Set())
+          void loadDashboard()
+        }}
+      />
     </>
   )
 }

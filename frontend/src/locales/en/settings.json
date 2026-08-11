@@ -13,6 +13,26 @@
     "title": "System Configuration",
     "description": "Configure core system settings like timezone and debug mode."
   },
+  "branding": {
+    "title": "Branding",
+    "description": "Customize how this garage appears in the app, login screen, browser tab, and PDF exports.",
+    "displayName": "Display name",
+    "displayNameHelp": "Shown in the navigation bar, login page, and PDF report headers.",
+    "logo": "Logo",
+    "logoHelp": "Recommended: square PNG or SVG, about 120–240px. Used in the nav and login screen.",
+    "favicon": "Favicon",
+    "faviconHelp": "Recommended: 512×512 PNG. Used for the browser tab and PWA icons.",
+    "upload": "Upload",
+    "remove": "Remove",
+    "nameSaved": "Display name saved",
+    "nameError": "Failed to save display name",
+    "logoUploaded": "Logo uploaded",
+    "logoRemoved": "Logo removed",
+    "logoError": "Failed to update logo",
+    "faviconUploaded": "Favicon uploaded",
+    "faviconRemoved": "Favicon removed",
+    "faviconError": "Failed to update favicon"
+  },
   "timezone": {
     "label": "Timezone",
     "description": "Affects log timestamps, scheduled tasks, and date displays throughout the application."

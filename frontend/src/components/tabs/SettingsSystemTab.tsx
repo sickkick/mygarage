@@ -11,6 +11,7 @@ import { SUPPORTED_LANGUAGES, SUPPORTED_CURRENCIES, languageToLocale } from '@/c
 import OIDCModal from '@/components/modals/OIDCModal'
 import FamilyManagementModal from '@/components/modals/FamilyManagementModal'
 import ArchivedVehiclesList from '@/components/ArchivedVehiclesList'
+import BrandingSettingsCard from '@/components/tabs/BrandingSettingsCard'
 import { Select, Toggle } from '../ui'
 
 type RawSetting = {
@@ -568,6 +569,7 @@ export default function SettingsSystemTab() {
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
       {/* Left Column */}
       <div className="space-y-6">
+      {isAdmin && <BrandingSettingsCard />}
       {/* System Configuration Section */}
       <div className="bg-garage-surface rounded-lg border border-garage-border p-6 space-y-6">
         {/* Header */}

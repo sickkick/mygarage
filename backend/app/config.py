@@ -100,6 +100,7 @@ class Settings(BaseSettings):
     attachments_dir: Path = Path("/data/attachments")
     photos_dir: Path = Path("/data/photos")
     documents_dir: Path = Path("/data/documents")
+    branding_dir: Path = Path("/data/branding")
 
     # Frontend build output served by the SPA-shell/static routes (issue #107).
     # Default unchanged from the previous hardcoded value so container

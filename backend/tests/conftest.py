@@ -100,10 +100,12 @@ def test_data_dir():
     photos_dir = tmp_dir / "photos"
     documents_dir = tmp_dir / "documents"
     attachments_dir = tmp_dir / "attachments"
+    branding_dir = tmp_dir / "branding"
 
     photos_dir.mkdir(exist_ok=True)
     documents_dir.mkdir(exist_ok=True)
     attachments_dir.mkdir(exist_ok=True)
+    branding_dir.mkdir(exist_ok=True)
 
     yield tmp_dir
 
@@ -130,11 +132,13 @@ async def client(db_session, test_data_dir: Path) -> AsyncGenerator[AsyncClient]
     original_photos_dir = settings.photos_dir
     original_documents_dir = settings.documents_dir
     original_attachments_dir = settings.attachments_dir
+    original_branding_dir = settings.branding_dir
 
     settings.data_dir = test_data_dir
     settings.photos_dir = test_data_dir / "photos"
     settings.documents_dir = test_data_dir / "documents"
     settings.attachments_dir = test_data_dir / "attachments"
+    settings.branding_dir = test_data_dir / "branding"
 
     # Also patch the module-level upload configs (they cache settings at import time)
     original_photo_base_dir = file_upload_service.PHOTO_UPLOAD_CONFIG.base_dir
@@ -159,6 +163,7 @@ async def client(db_session, test_data_dir: Path) -> AsyncGenerator[AsyncClient]
     settings.photos_dir = original_photos_dir
     settings.documents_dir = original_documents_dir
     settings.attachments_dir = original_attachments_dir
+    settings.branding_dir = original_branding_dir
 
     # Restore module-level configs
     file_upload_service.PHOTO_UPLOAD_CONFIG.base_dir = original_photo_base_dir

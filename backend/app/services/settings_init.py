@@ -19,6 +19,24 @@ DEFAULT_SETTINGS = {
         "description": "Application version",
         "encrypted": False,
     },
+    "app_name": {
+        "value": app_settings.app_name,
+        "category": "general",
+        "description": "Instance display name shown in the UI and exports",
+        "encrypted": False,
+    },
+    "custom_logo": {
+        "value": "false",
+        "category": "general",
+        "description": "Whether a custom logo has been uploaded",
+        "encrypted": False,
+    },
+    "custom_favicon": {
+        "value": "false",
+        "category": "general",
+        "description": "Whether a custom favicon has been uploaded",
+        "encrypted": False,
+    },
     "debug_mode": {
         "value": "false",
         "category": "general",

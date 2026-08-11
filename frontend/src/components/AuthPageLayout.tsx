@@ -6,6 +6,7 @@
 import { Car } from 'lucide-react'
 import { useTranslation } from 'react-i18next'
 import { useAppVersion } from '../hooks/useAppVersion'
+import { useBranding } from '../contexts/BrandingContext'
 
 interface AuthPageLayoutProps {
   subtitle: string
@@ -24,6 +25,8 @@ export default function AuthPageLayout({
 }: AuthPageLayoutProps) {
   const { t } = useTranslation('common')
   const version = useAppVersion()
+  const { appName, logoUrl } = useBranding()
+  const isDefaultName = appName === 'MyGarage'
 
   return (
     <div className={`min-h-screen bg-garage-bg flex items-center justify-center px-4 ${className}`}>
@@ -31,14 +34,23 @@ export default function AuthPageLayout({
         {/* Logo and Header */}
         <div className="text-center mb-8">
           <div className="flex justify-center mb-4">
-            <div className="p-4 bg-primary/10 rounded-full">
-              <Car className="w-12 h-12 text-primary" />
+            <div className="p-4 bg-primary/10 rounded-full overflow-hidden">
+              {logoUrl ? (
+                <img src={logoUrl} alt="" className="w-12 h-12 object-contain" />
+              ) : (
+                <Car className="w-12 h-12 text-primary" />
+              )}
             </div>
           </div>
           <h1 className="text-3xl font-bold text-garage-text mb-2">
-            {/* Accent falls on "My", matching the header wordmark in shell/Logo.tsx. */}
-            {/* i18n-exempt — product brand name, identical in every locale */}
-            <span className="text-primary">My</span>Garage
+            {/* i18n-exempt — brand / instance display name */}
+            {isDefaultName ? (
+              <>
+                <span className="text-primary">My</span>Garage
+              </>
+            ) : (
+              appName
+            )}
           </h1>
           <p className="text-garage-text-muted">{subtitle}</p>
           {headerExtra}
@@ -54,7 +66,7 @@ export default function AuthPageLayout({
 
         {/* Version Footer */}
         <div className="mt-8 text-center text-xs text-garage-text-muted">
-          MyGarage v{version} &bull; {t('auth.tagline')}
+          {appName} v{version} &bull; {t('auth.tagline')}
         </div>
       </div>
     </div>

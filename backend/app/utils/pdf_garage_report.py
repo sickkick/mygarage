@@ -70,6 +70,9 @@ def generate_garage_analytics_pdf(
     garage_data: dict[str, Any],
     currency_code: str = "USD",
     locale: str = "en-US",
+    *,
+    app_name: str = "MyGarage",
+    logo_path: str | None = None,
 ) -> BytesIO:
     """Generate a branded garage-wide analytics PDF report.
 
@@ -102,13 +105,14 @@ def generate_garage_analytics_pdf(
     )
 
     subtitle = "Garage Analytics Report"
+    logo = str(logo_path) if logo_path else None
 
     def on_first_page(canvas: Any, doc: Any) -> None:  # pyright: ignore[reportUnusedParameter]
-        draw_branded_header(canvas, doc, subtitle)
-        draw_branded_footer(canvas, doc)
+        draw_branded_header(canvas, doc, subtitle, app_name=app_name, logo_path=logo)
+        draw_branded_footer(canvas, doc, app_name=app_name)
 
     def on_later_pages(canvas: Any, doc: Any) -> None:  # pyright: ignore[reportUnusedParameter]
-        draw_branded_footer(canvas, doc)
+        draw_branded_footer(canvas, doc, app_name=app_name)
 
     doc.addPageTemplates(
         [

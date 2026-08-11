@@ -1199,6 +1199,7 @@ async def export_garage_analytics_pdf(
     """
     Export garage analytics as PDF report.
     """
+    from app.services.branding_service import BrandingService
     from app.utils.currency import normalize_pdf_currency_params
     from app.utils.pdf_garage_report import generate_garage_analytics_pdf
 
@@ -1210,9 +1211,15 @@ async def export_garage_analytics_pdf(
     if garage_data.vehicle_count == 0:
         raise HTTPException(status_code=404, detail="No vehicles found in garage")
 
+    branding = await BrandingService.get_pdf_branding(db)
+
     # Use model_dump() to pass all fields through (fixes data flow bug)
     pdf_buffer = generate_garage_analytics_pdf(
-        garage_data.model_dump(), currency_code=safe_code, locale=safe_locale
+        garage_data.model_dump(),
+        currency_code=safe_code,
+        locale=safe_locale,
+        app_name=branding.app_name,
+        logo_path=str(branding.logo_path) if branding.logo_path else None,
     )
 
     # Return as file download
@@ -1541,6 +1548,7 @@ async def export_analytics_pdf(
     """
     from fastapi.responses import StreamingResponse
 
+    from app.services.branding_service import BrandingService
     from app.utils.currency import normalize_pdf_currency_params
     from app.utils.pdf_vehicle_report import generate_vehicle_analytics_pdf
 
@@ -1597,6 +1605,7 @@ async def export_analytics_pdf(
 
     # Convert analytics to dict for PDF generator
     analytics_data = analytics.model_dump()
+    branding = await BrandingService.get_pdf_branding(db)
 
     # Generate PDF
     pdf_buffer = generate_vehicle_analytics_pdf(
@@ -1606,6 +1615,8 @@ async def export_analytics_pdf(
         currency_code=safe_code,
         locale=safe_locale,
         reminders_data=reminders_data,
+        app_name=branding.app_name,
+        logo_path=str(branding.logo_path) if branding.logo_path else None,
     )
 
     # Return PDF as streaming response

@@ -134,6 +134,7 @@ async def lifespan(app: FastAPI):
         settings.attachments_dir.mkdir(parents=True, exist_ok=True)
         settings.photos_dir.mkdir(parents=True, exist_ok=True)
         settings.documents_dir.mkdir(parents=True, exist_ok=True)
+        settings.branding_dir.mkdir(parents=True, exist_ok=True)
         (settings.data_dir / "backups").mkdir(parents=True, exist_ok=True)
         logger.info("Data directories verified")
     except PermissionError as e:
@@ -348,6 +349,7 @@ from app.routes import (
     window_sticker_router,
 )
 from app.routes.auth import router as auth_router
+from app.routes.branding import router as branding_router
 from app.routes.family import router as family_router
 from app.routes.livelink import router as livelink_ingest_router
 from app.routes.livelink_admin import router as livelink_admin_router
@@ -364,6 +366,7 @@ from app.routes.webhooks import router as webhooks_router
 from app.routes.search import router as search_router
 
 app.include_router(auth_router)
+app.include_router(branding_router)
 app.include_router(family_router)
 app.include_router(oidc_router)
 app.include_router(vin_router)
@@ -421,9 +424,12 @@ app.include_router(search_router)
 # Serve static files (frontend build) in production
 static_dir = Path(settings.static_dir)
 if static_dir.exists():
+    from fastapi import Depends
     from fastapi.exception_handlers import http_exception_handler
-    from fastapi.responses import FileResponse, HTMLResponse
+    from fastapi.responses import FileResponse, HTMLResponse, JSONResponse
+    from sqlalchemy.ext.asyncio import AsyncSession
 
+    from app.database import get_db
     from app.utils.html_base import inject_base_href
 
     _index_shell = inject_base_href(
@@ -444,18 +450,50 @@ if static_dir.exists():
         )
 
     @app.get("/manifest.json", include_in_schema=False)
-    async def manifest():
-        return FileResponse(
-            static_dir / "manifest.json", media_type="application/json", headers=_NO_CACHE
-        )
+    async def manifest(db: AsyncSession = Depends(get_db)):
+        import json
 
-    # Serve icon files with correct MIME type
+        from app.services.branding_service import BrandingService
+
+        manifest_path = static_dir / "manifest.json"
+        data = json.loads(manifest_path.read_text(encoding="utf-8"))
+        app_name = await BrandingService.get_app_name(db)
+        data["name"] = f"{app_name} - Vehicle Maintenance Tracker"
+        data["short_name"] = app_name
+        if BrandingService.find_icon_path(192) or BrandingService.find_favicon_path():
+            data["icons"] = [
+                {
+                    "src": "./icon-192.png",
+                    "sizes": "192x192",
+                    "type": "image/png",
+                    "purpose": "any maskable",
+                },
+                {
+                    "src": "./icon-512.png",
+                    "sizes": "512x512",
+                    "type": "image/png",
+                    "purpose": "any maskable",
+                },
+            ]
+        return JSONResponse(data, headers=_NO_CACHE)
+
+    # Serve icon files with correct MIME type (prefer custom branding)
     @app.get("/icon-192.png", include_in_schema=False)
     async def icon_192():
+        from app.services.branding_service import BrandingService
+
+        custom = BrandingService.find_icon_path(192)
+        if custom:
+            return FileResponse(custom, media_type="image/png", headers=_NO_CACHE)
         return FileResponse(static_dir / "icon-192.png", media_type="image/png")
 
     @app.get("/icon-512.png", include_in_schema=False)
     async def icon_512():
+        from app.services.branding_service import BrandingService
+
+        custom = BrandingService.find_icon_path(512)
+        if custom:
+            return FileResponse(custom, media_type="image/png", headers=_NO_CACHE)
         return FileResponse(static_dir / "icon-512.png", media_type="image/png")
 
     # Serve root index.html

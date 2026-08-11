@@ -25,7 +25,7 @@ class BackupService:
     """Service for creating and managing backups."""
 
     _SAFE_FILE_ENTRIES = {"mygarage.db", "mygarage.db-wal", "mygarage.db-shm", "mygarage.pgdump"}
-    _SAFE_DIR_ROOTS = {"photos", "documents", "attachments"}
+    _SAFE_DIR_ROOTS = {"photos", "documents", "attachments", "branding"}
 
     def __init__(
         self,
@@ -346,6 +346,12 @@ class BackupService:
                 tar.add(attachments_dir, arcname="attachments")
                 logger.info("Added attachments directory to backup")
 
+            # Add branding directory if it exists
+            branding_dir = self.data_dir / "branding"
+            if branding_dir.exists() and any(branding_dir.iterdir()):
+                tar.add(branding_dir, arcname="branding")
+                logger.info("Added branding directory to backup")
+
         logger.info("Created full backup: %s", filename)
 
         # Get file stats
@@ -502,7 +508,7 @@ class BackupService:
                         tar.add(snapshot_path, arcname="mygarage.db")
 
                 # Also backup current files
-                for dir_name in ["photos", "documents", "attachments"]:
+                for dir_name in ["photos", "documents", "attachments", "branding"]:
                     dir_path = self.data_dir / dir_name
                     if dir_path.exists() and any(dir_path.iterdir()):
                         tar.add(dir_path, arcname=dir_name)

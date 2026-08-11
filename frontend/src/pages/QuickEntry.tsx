@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react'
 import { Link, useSearchParams } from 'react-router-dom'
 import { useTranslation } from 'react-i18next'
 import { useAuth } from '../contexts/AuthContext'
+import { useBranding } from '../contexts/BrandingContext'
 import { Car, Fuel, Wrench, Gauge, ChevronRight, LayoutDashboard, Timer } from 'lucide-react'
 import { toast } from 'sonner'
 import FuelRecordForm from '../components/FuelRecordForm'
@@ -20,6 +21,7 @@ type EntryType = 'fuel' | 'service' | 'odometer' | 'hours' | null
 export default function QuickEntry() {
   const { t } = useTranslation('vehicles')
   const { user } = useAuth()
+  const { appName, logoUrl } = useBranding()
   const [searchParams] = useSearchParams()
   const [selectedVin, setSelectedVin] = useState<string>('')
   const [entryType, setEntryType] = useState<EntryType>(null)
@@ -83,8 +85,12 @@ export default function QuickEntry() {
       {/* Minimal header */}
       <header className="bg-garage-surface border-b border-garage-border px-4 py-3 flex items-center justify-between">
         <div className="flex items-center gap-2">
-          <Car className="w-5 h-5 text-primary" />
-          <span className="font-semibold text-garage-text">{t('common:appName')}</span>
+          {logoUrl ? (
+            <img src={logoUrl} alt="" className="w-5 h-5 object-contain" />
+          ) : (
+            <Car className="w-5 h-5 text-primary" />
+          )}
+          <span className="font-semibold text-garage-text">{appName}</span>
         </div>
         <Link
           to="/"

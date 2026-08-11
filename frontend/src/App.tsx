@@ -4,6 +4,7 @@ import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
 import { ReactQueryDevtools } from '@tanstack/react-query-devtools'
 import { ErrorBoundary } from './components/ErrorBoundary'
 import { AuthProvider } from './contexts/AuthContext'
+import { BrandingProvider } from './contexts/BrandingContext'
 import { ThemeProvider } from './contexts/ThemeContext'
 import { AccentProvider } from './contexts/AccentContext'
 import ProtectedRoute from './components/ProtectedRoute'
@@ -82,6 +83,7 @@ function App() {
     <ErrorBoundary>
       <ThemeProvider>
         <AccentProvider>
+        <BrandingProvider>
         <AuthProvider>
           <PreferenceSyncProvider>
           <QueryClientProvider client={queryClient}>
@@ -128,6 +130,7 @@ function App() {
           </QueryClientProvider>
           </PreferenceSyncProvider>
         </AuthProvider>
+        </BrandingProvider>
         </AccentProvider>
       </ThemeProvider>
     </ErrorBoundary>

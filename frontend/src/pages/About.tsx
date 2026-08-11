@@ -12,12 +12,31 @@ import {
   Search,
 } from 'lucide-react'
 import { useAppVersion } from '../hooks/useAppVersion'
+import { useBranding } from '../contexts/BrandingContext'
 import VINDecoderModal from '../components/modals/VINDecoderModal'
 
 export default function About() {
   const { t } = useTranslation('common')
   const version = useAppVersion()
+  const { appName, logoUrl } = useBranding()
+  const isDefaultName = appName === 'MyGarage'
   const [showVINDecoder, setShowVINDecoder] = useState(false)
+
+  const BrandMark = ({ className }: { className: string }) =>
+    logoUrl ? (
+      <img src={logoUrl} alt="" className={`${className} object-contain`} />
+    ) : (
+      <Car className={className} />
+    )
+
+  const Wordmark = () =>
+    isDefaultName ? (
+      <>
+        <span className="text-primary">My</span>Garage
+      </>
+    ) : (
+      <>{appName}</>
+    )
 
   return (
     <div className="min-h-screen bg-garage-bg">
@@ -25,7 +44,7 @@ export default function About() {
       <div className="bg-garage-surface border-b border-garage-border">
         <div className="container mx-auto px-4 py-6">
           <div className="flex items-center gap-3">
-            <Car className="w-8 h-8 text-primary" />
+            <BrandMark className="w-8 h-8 text-primary" />
             <div>
               <h1 className="text-3xl font-bold text-garage-text">{t('about.title')}</h1>
               <p className="text-sm text-garage-text-muted">{t('about.subtitle')}</p>
@@ -38,12 +57,11 @@ export default function About() {
         {/* Header */}
         <div className="text-center">
           <div className="inline-flex items-center justify-center w-20 h-20 bg-primary/10 rounded-2xl mb-6">
-            <Car className="w-12 h-12 text-primary" />
+            <BrandMark className="w-12 h-12 text-primary" />
           </div>
           <h1 className="text-4xl font-bold text-garage-text mb-3">
-            {/* Accent falls on "My", matching the header wordmark in shell/Logo.tsx. */}
-            {/* i18n-exempt — product brand name, identical in every locale */}
-            <span className="text-primary">My</span>Garage
+            {/* i18n-exempt — brand / instance display name */}
+            <Wordmark />
           </h1>
           <p className="text-xl text-garage-text-muted">
             {t('about.tagline')}
@@ -208,7 +226,7 @@ export default function About() {
             {t('about.madeWith')} <Heart className="w-4 h-4 text-danger" /> {t('about.forCommunity')}
           </p>
           <p className="text-garage-text-muted text-xs mt-2">
-            MyGarage v{version}
+            {appName} v{version}
           </p>
         </div>
       </div>

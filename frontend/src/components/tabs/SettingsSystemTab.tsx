@@ -22,7 +22,7 @@ type RawSetting = {
 export default function SettingsSystemTab() {
   const { t } = useTranslation('settings')
   const { i18n } = useTranslation()
-  const { isAuthenticated, isAdmin, user: currentUser, refreshUser } = useAuth()
+  const { isAuthenticated, isAdmin, authMode, user: currentUser, refreshUser } = useAuth()
   const { triggerSave, registerSaveHandler, unregisterSaveHandler } = useSettings()
   const [formData, setFormData] = useState({
     timezone: 'UTC',
@@ -569,7 +569,7 @@ export default function SettingsSystemTab() {
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
       {/* Left Column */}
       <div className="space-y-6">
-      {isAdmin && <BrandingSettingsCard />}
+      {(isAdmin || authMode === 'none') && <BrandingSettingsCard />}
       {/* System Configuration Section */}
       <div className="bg-garage-surface rounded-lg border border-garage-border p-6 space-y-6">
         {/* Header */}

@@ -613,6 +613,18 @@ DEFAULT_SETTINGS = {
         "description": "Imperial gallon standard: us (3.785 L) or uk (4.546 L)",
         "encrypted": False,
     },
+    "family_friends_enabled": {
+        "value": "false",
+        "category": "general",
+        "description": "Show Family & Friends garage section (shared + reference vehicles)",
+        "encrypted": False,
+    },
+    "customers_enabled": {
+        "value": "false",
+        "category": "general",
+        "description": "Show Customers garage section (side-work vehicles)",
+        "encrypted": False,
+    },
 }
 
 

@@ -75,12 +75,20 @@ async def get_public_settings(db: AsyncSession = Depends(get_db)):
     - app_name: Instance display name
     - custom_logo: Whether a custom logo is configured
     - custom_favicon: Whether a custom favicon is configured
+    - family_friends_enabled / customers_enabled: garage section feature flags
 
     Security: This endpoint is intentionally public to allow frontend
     initialization before login. All sensitive settings are excluded.
     """
     # Whitelist of public settings safe for unauthenticated access
-    public_keys = {"auth_mode", "app_name", "custom_logo", "custom_favicon"}
+    public_keys = {
+        "auth_mode",
+        "app_name",
+        "custom_logo",
+        "custom_favicon",
+        "family_friends_enabled",
+        "customers_enabled",
+    }
 
     result = await db.execute(
         select(Setting).where(Setting.key.in_(public_keys)).order_by(Setting.key)

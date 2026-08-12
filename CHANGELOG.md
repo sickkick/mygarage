@@ -8,7 +8,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [Unreleased]
 
 ### Added
-- Dashboard garage lanes for **Family & Friends** (household shares + lightweight reference vehicles) and **Customers** (side-work vehicles), backed by an `external_vehicles` API. Both sections are opt-in via Settings → System (`family_friends_enabled` / `customers_enabled`, default off). When Family & Friends is off, shared vehicles stay hidden from the garage.
+- Dashboard garage lanes for **Family & Friends** (household shares + lightweight reference vehicles) and **Customers** (side-work vehicles), backed by an `external_vehicles` API. Both sections are opt-in via Settings → System (`family_friends_enabled` / `customers_enabled`, default off). When Family & Friends is off, shared vehicles stay hidden from the garage. Optional VIN with NHTSA decode on add/edit autofills year/make/model.
 
 ## [3.0.0-rc3] - 2026-08-06
 

@@ -160,7 +160,9 @@ async def lifespan(app: FastAPI):
         gallon_row = (
             await db.execute(select(Setting).where(Setting.key == "imperial_gallon_standard"))
         ).scalar_one_or_none()
-        UnitConverter.set_gallon_standard(gallon_row.value if gallon_row and gallon_row.value else "us")
+        UnitConverter.set_gallon_standard(
+            gallon_row.value if gallon_row and gallon_row.value else "us"
+        )
 
         # Check for insecure auth_mode='none' and log warning
         from app.services.auth import get_auth_mode
@@ -354,13 +356,13 @@ from app.routes.livelink_vehicle import router as livelink_vehicle_router
 from app.routes.oidc import router as oidc_router
 from app.routes.poi import router as poi_router
 from app.routes.quick_entry import router as quick_entry_router
+from app.routes.search import router as search_router
 from app.routes.torque import TorqueTokenRedactionFilter
 from app.routes.torque import router as torque_router
 from app.routes.webhooks import router as webhooks_router
 from app.routes.widget import router as widget_router
 from app.routes.widget_keys import router as widget_keys_router
 from app.routes.widget_v2 import router as widget_v2_router
-from app.routes.search import router as search_router
 
 app.include_router(auth_router)
 app.include_router(family_router)

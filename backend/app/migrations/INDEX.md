@@ -98,3 +98,5 @@ migrations must swallow their own operational errors.
 | `085_add_tire_tracking` | **FATAL** — Add tires + tire_readings tables for position/tread/DOT tracking. |
 | `086_add_ev_charge_session_fields` | **FATAL** — Add EV/PHEV charge-session fields onto fuel_records. |
 | `087_add_webhook_ingest_settings` | Add webhook_ingest_token setting for inbound fuel/odometer/reminder webhooks. |
+| `089_supply_barcode_session_insights` | **FATAL** — Add supply barcode + LiveLink drive-session insight columns. |
+| `090_dtc_phase2_enrichment` | Seed Phase 2 DTC causes/symptoms/fix_guidance for common codes. |

@@ -19181,7 +19181,14 @@
             "title": "Data Included"
           },
           "from_user": {
-            "$ref": "#/components/schemas/UserMinimal"
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/UserMinimal"
+              },
+              {
+                "type": "null"
+              }
+            ]
           },
           "id": {
             "title": "Id",
@@ -19217,7 +19224,6 @@
         "required": [
           "id",
           "vehicle_vin",
-          "from_user",
           "to_user",
           "transferred_at",
           "transferred_by",

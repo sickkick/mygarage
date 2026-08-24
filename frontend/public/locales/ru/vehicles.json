@@ -661,7 +661,8 @@
     "title": "Транспондеры"
   },
   "transferHistory": {
-    "title": "История передач"
+    "title": "История передач",
+    "unassigned": "Не назначен"
   },
   "vehicleCard": {
     "sold": "Продано"

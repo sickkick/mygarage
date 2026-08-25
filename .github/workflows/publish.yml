@@ -16,7 +16,9 @@ jobs:
     with:
       enable-translations: true
       security-tripwire-script: .github/scripts/security-tripwire.sh
-      image-name: homelabforge/mygarage
+      # Use the repo that triggered the workflow so fork publishes land under
+      # ghcr.io/<owner>/<repo> (e.g. sickkick/mygarage), not the upstream org.
+      image-name: ${{ github.repository }}
       release-name-prefix: 'MyGarage v'
     secrets:
       github-token: ${{ secrets.GITHUB_TOKEN }}
